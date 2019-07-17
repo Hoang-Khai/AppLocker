@@ -49,13 +49,13 @@ public class UnlockActivity extends AppCompatActivity {
         String pass = txtPassword.getText().toString();
         Password p = new Password(pass,getApplicationContext());
         if (p.isMatchedWithTokenInDB()) {
-            //finish intent
-//            finish();
-
+//            finish intent
+            finish();
         }
         else {
 //            txtPassword.setText("");
 //            textView.setText("Wrong Password");
+            pressCancelButton();
         }
     }
 

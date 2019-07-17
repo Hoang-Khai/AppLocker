@@ -81,5 +81,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return new AppDisplayer(packageName,icon);
     }
-
 }

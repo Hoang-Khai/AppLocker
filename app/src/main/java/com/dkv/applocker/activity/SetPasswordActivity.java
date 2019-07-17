@@ -34,8 +34,5 @@ public class SetPasswordActivity extends AppCompatActivity {
                 finish();
             }
         });
-
     }
-
-
 }
