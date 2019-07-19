@@ -49,10 +49,18 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent,100);
             }
         });
+//<<<<<<< HEAD
 
         appListView = findViewById(R.id.appListView);
         appListView.setAdapter(new AppListAdapter(MainActivity.this,apps));
 
+//=======
+	    //https://stackoverflow.com/questions/19852069/blocking-android-apps-programmatically/19852713#comment29526195_19852713
+        //https://stackoverflow.com/questions/8061179/broadcast-receiver-to-detect-application-start
+        //https://github.com/savvisingh/AppLock
+        //https://github.com/SubhamTyagi/AppLock
+        //https://github.com/mattsilber/applock
+//>>>>>>> 8f5b5bfd9ce5395fbb6d3a7d41682472407cd2b7
     }
 
     //Get all application on device
@@ -93,5 +101,4 @@ public class MainActivity extends AppCompatActivity {
         return new AppDisplayer(packageName,icon);
 
     }
-
 }
