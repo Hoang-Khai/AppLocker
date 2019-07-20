@@ -44,7 +44,7 @@ public class LockedAppList implements Serializable {
         SQLHelper dbHelper = new SQLHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        db.delete(Password.TABLE_NAME,COLUMN_NAME_APP_NAME+"=?",new String[]{selectedPacakage});
+        db.delete(LockedAppList.TABLE_NAME,COLUMN_NAME_APP_NAME+"=?",new String[]{selectedPacakage});
         Log.i("DeleteSuccess",selectedPacakage);
 
         db.close();
@@ -57,7 +57,7 @@ public class LockedAppList implements Serializable {
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_NAME_APP_NAME,selectedPacakage);
-        db.insert(Password.TABLE_NAME,null,values);
+        db.insert(LockedAppList.TABLE_NAME,null,values);
         Log.i("InsertSuccess",selectedPacakage);
 
         db.close();

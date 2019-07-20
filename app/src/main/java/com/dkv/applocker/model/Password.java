@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.io.Serializable;
 
@@ -57,8 +58,11 @@ public class Password implements Serializable {
     private boolean isMatchedWithTokenInDB(String inputPassword) {
         boolean result = false;
         String oldToken = getTokenFromDB();
-        if(oldToken.equals(inputPassword.hashCode())) {
+        if(oldToken.equals(""+inputPassword.hashCode())) {
             result = true;
+            Log.i("Login","Password OK");
+        } else {
+            Log.i("Login","Password wrong\n" + oldToken + "\n"+("1234".hashCode()) + "\n"+(inputPassword.hashCode()));
         }
         return result;
     }
@@ -104,5 +108,20 @@ public class Password implements Serializable {
         return token;
     }
 
-
+    //for debug only
+//    public void rsPassword(String newPassword) {
+//        ////////////////////////////////////////////////////////////////////////////////////////////
+//        //Code to write token in here
+//        SQLHelper dbHelper = new SQLHelper(context);
+//        SQLiteDatabase db = dbHelper.getWritableDatabase();
+//
+//        db.delete(Password.TABLE_NAME,null,null);
+//        ContentValues values = new ContentValues();
+//        values.put(COLUMN_NAME_TOKEN,newPassword.hashCode());
+//        db.insert(Password.TABLE_NAME,null,values);
+//
+//        db.close();
+//        dbHelper.close();
+//        ////////////////////////////////////////////////////////////////////////////////////////////
+//    }
 }

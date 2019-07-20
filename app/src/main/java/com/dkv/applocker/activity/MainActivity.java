@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.dkv.applocker.R;
 import com.dkv.applocker.controller.AppListAdapter;
 import com.dkv.applocker.helper_for_sql.SQLHelper;
+import com.dkv.applocker.exception.WrongPasswordException;
 import com.dkv.applocker.model.AppDisplayer;
 import com.dkv.applocker.model.LockedAppList;
 import com.dkv.applocker.model.Password;
@@ -60,12 +61,18 @@ public class MainActivity extends AppCompatActivity {
 
         apps = new ArrayList<>();
         getAllApp();
+//        Password p = new Password("1234",getApplicationContext());
+//        try {
+//            p.changePasswordInSQlite("");
+//        } catch (WrongPasswordException e) {
+//            e.printStackTrace();
+//        }
 
         btnSetting = findViewById(R.id.btn_setting);
         btnSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent = new Intent(MainActivity.this,SetPasswordActivity.class);
+                intent = new Intent(MainActivity.this,SettingActivity.class);
                 startActivityForResult(intent,100);
             }
         });
@@ -75,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         appListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i("ItemClick","success");
+//                Log.i("ItemClick",parent.getItemAtPosition(position).getClass().toString());
                 changeAppState(parent, view, position, id);
             }
         });
@@ -84,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
     private void changeAppState(AdapterView<?> parent, View view, int position, long id) {
         AppDisplayer selected = (AppDisplayer)parent.getItemAtPosition(position);
         String selectedPackage = selected.getPackageName();
-        Log.i("TouchPackage",selectedPackage);
+//        Log.i("TouchPackage",selectedPackage);
         LockedAppList lockedAppList = new LockedAppList(getApplicationContext());
         if (lockedAppList.hasForePackageLocked(selectedPackage)) {
             lockedAppList.deletePackageFromDB(getApplicationContext(),selectedPackage);
@@ -108,8 +115,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 //        List<PackageInfo> packs = packageManager.getInstalledPackages(0);
-
-        for (int i = 0; i < appList.size(); i++) {
+        int appListNumber = appList.size();
+        for (int i = 0; i < appListNumber; i++) {
             ResolveInfo p = appList.get(i);
             //Get name and icon from app
             AppDisplayer app = getAppDisplayerFromPackageInfo(p);
@@ -121,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
         String appName = p.loadLabel(getPackageManager()).toString();
 //        String appName = "Test";
         String packageName = p.activityInfo.packageName;
+//        Log.i("ResolvePackage",packageName==null?"null":packageName);
 
         Drawable icon=null;
 
