@@ -2,25 +2,31 @@ package com.dkv.applocker.controller.service_and_state_pattern;
 
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
-import android.app.ActivityManager;
-import android.app.Service;
 import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.os.Build;
-import android.os.IBinder;
-import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
-import java.util.Collections;
-import java.util.List;
+import com.dkv.applocker.controller.service_and_state_pattern.State.LockedState;
+import com.dkv.applocker.controller.service_and_state_pattern.State.State;
+import com.dkv.applocker.controller.service_and_state_pattern.State.UnlockedState;
 
 public class TopActivityProcessService extends AccessibilityService {
+
+    State lockedState;
+    State unlockedState;
+
+    State currentState;
+    String currentPackage;
+
+    public TopActivityProcessService() {
+        lockedState = new LockedState(this);
+        unlockedState = new UnlockedState(this);
+
+        currentState = lockedState;
+        currentPackage = "com.dkv.applocker";
+    }
 
     @Override
     protected void onServiceConnected() {
@@ -38,6 +44,7 @@ public class TopActivityProcessService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
+        String forePackage="";
         //Phan nay dang viet do
         if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
             if (event.getPackageName() != null && event.getClassName() != null) {
@@ -48,8 +55,10 @@ public class TopActivityProcessService extends AccessibilityService {
 
                 ActivityInfo activityInfo = tryGetActivity(componentName);
                 boolean isActivity = activityInfo != null;
-                if (isActivity)
-                    Log.i("CurrentActivity", componentName.getPackageName());
+                if (isActivity) {
+                    forePackage = componentName.getPackageName();
+                    currentState.changeActivity(forePackage, getApplicationContext());
+                }
             }
         }
     }
@@ -65,6 +74,22 @@ public class TopActivityProcessService extends AccessibilityService {
     @Override
     public void onInterrupt() {
 
+    }
+
+    public String getCurrentPackage() {
+        return currentPackage;
+    }
+
+    public State getLockedState() {
+        return lockedState;
+    }
+
+    public State getUnlockedState() {
+        return unlockedState;
+    }
+
+    public void setCurrentState(State currentState) {
+        this.currentState = currentState;
     }
 
 }
