@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         appListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i("ItemClick","success");
+                Log.i("ItemClick",parent.getItemAtPosition(position).getClass().toString());
                 changeAppState(parent, view, position, id);
             }
         });
@@ -96,8 +96,8 @@ public class MainActivity extends AppCompatActivity {
         List<ResolveInfo> appList = packageManager.queryIntentActivities(mainIntent, 0);
         Collections.sort(appList, new ResolveInfo.DisplayNameComparator(packageManager));
 //        List<PackageInfo> packs = packageManager.getInstalledPackages(0);
-
-        for (int i = 0; i < appList.size(); i++) {
+        int appListNumber = appList.size();
+        for (int i = 0; i < appListNumber; i++) {
             ResolveInfo p = appList.get(i);
 //            ApplicationInfo a = p.filter.;
 
@@ -117,7 +117,8 @@ public class MainActivity extends AppCompatActivity {
     private AppDisplayer getAppDisplayerFromPackageInfo(ResolveInfo p) {
         String appName = p.loadLabel(getPackageManager()).toString();
 //        String appName = "Test";
-        String packageName = p.resolvePackageName;
+        String packageName = p.activityInfo.packageName;
+        Log.i("ResolvePackage",packageName==null?"null":packageName);
 
         Drawable icon=null;
         try {

@@ -73,10 +73,10 @@ public class AppListAdapter extends BaseAdapter {
         holder.appStatus.setChecked(lockedAppList.hasForePackageLocked(listApp.get(position).getPackageName()));
         return convertView;
     }
+
     static class ViewHolder {
         ImageView appIC;
         TextView appName;
         Switch appStatus;
-
     }
 }
