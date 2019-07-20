@@ -18,20 +18,17 @@ public class Password implements Serializable {
     private Context context;
     private String password;
 
-    public Password() {
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public Password(String password, Context context) {
         this.password = password;
         this.context = context;
+    }
+
+    public Password(Context applicationContext) {
+        context = applicationContext;
+    }
+
+    public boolean hasPasswordInDB() {
+        return !(getTokenFromDB()==null);
     }
 
     public void changePasswordInSQlite(String oldPassword) throws WrongPasswordException {
@@ -52,6 +49,14 @@ public class Password implements Serializable {
         } else {
             //delete all record and write the new password token
             writeTokenToDB(newToken);
+        }
+    }
+
+    public void changePasswordInSQlite() {
+        try {
+            changePasswordInSQlite(null);
+        } catch (WrongPasswordException e) {
+            e.printStackTrace();
         }
     }
     
@@ -109,19 +114,30 @@ public class Password implements Serializable {
     }
 
     //for debug only
-//    public void rsPassword(String newPassword) {
-//        ////////////////////////////////////////////////////////////////////////////////////////////
-//        //Code to write token in here
-//        SQLHelper dbHelper = new SQLHelper(context);
-//        SQLiteDatabase db = dbHelper.getWritableDatabase();
-//
-//        db.delete(Password.TABLE_NAME,null,null);
-//        ContentValues values = new ContentValues();
-//        values.put(COLUMN_NAME_TOKEN,newPassword.hashCode());
-//        db.insert(Password.TABLE_NAME,null,values);
-//
-//        db.close();
-//        dbHelper.close();
-//        ////////////////////////////////////////////////////////////////////////////////////////////
-//    }
+    public void rsPassword(String newPassword) {
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //Code to write token in here
+        SQLHelper dbHelper = new SQLHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        db.delete(Password.TABLE_NAME,null,null);
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NAME_TOKEN,newPassword.hashCode());
+        db.insert(Password.TABLE_NAME,null,values);
+
+        db.close();
+        dbHelper.close();
+        ////////////////////////////////////////////////////////////////////////////////////////////
+    }
+    public void delPassword() {
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        SQLHelper dbHelper = new SQLHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        db.delete(Password.TABLE_NAME,null,null);
+
+        db.close();
+        dbHelper.close();
+        ////////////////////////////////////////////////////////////////////////////////////////////
+    }
 }

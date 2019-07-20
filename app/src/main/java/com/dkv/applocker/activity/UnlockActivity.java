@@ -66,4 +66,9 @@ public class UnlockActivity extends AppCompatActivity {
         homeScreen.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(homeScreen);
     }
+
+    @Override
+    public void onBackPressed() {
+        pressCancelButton();
+    }
 }

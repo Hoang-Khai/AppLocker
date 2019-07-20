@@ -63,4 +63,17 @@ public class LockedAppList implements Serializable {
         db.close();
         dbHelper.close();
     }
+
+    public void delList() {
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //Code to write token in here
+        SQLHelper dbHelper = new SQLHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        db.delete(LockedAppList.TABLE_NAME,null,null);
+
+        db.close();
+        dbHelper.close();
+        ////////////////////////////////////////////////////////////////////////////////////////////
+    }
 }
