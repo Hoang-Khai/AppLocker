@@ -2,8 +2,10 @@ package com.dkv.applocker.activity;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -93,10 +95,12 @@ public class MainActivity extends AppCompatActivity {
 
         List<ResolveInfo> appList = packageManager.queryIntentActivities(mainIntent, 0);
         Collections.sort(appList, new ResolveInfo.DisplayNameComparator(packageManager));
-        List<PackageInfo> packs = packageManager.getInstalledPackages(0);
-        for (int i = 0; i < packs.size(); i++) {
-            PackageInfo p = packs.get(i);
-            ApplicationInfo a = p.applicationInfo;
+//        List<PackageInfo> packs = packageManager.getInstalledPackages(0);
+
+        for (int i = 0; i < appList.size(); i++) {
+            ResolveInfo p = appList.get(i);
+//            ApplicationInfo a = p.filter.;
+
             // skip system apps if they shall not be included
 //            if ((a.flags & ApplicationInfo.FLAG_SYSTEM) == 1) {
 //                continue;
@@ -110,15 +114,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private AppDisplayer getAppDisplayerFromPackageInfo(PackageInfo p) {
-        String appName = p.applicationInfo.loadLabel(getPackageManager()).toString();;
-        String packageName = p.packageName;
+    private AppDisplayer getAppDisplayerFromPackageInfo(ResolveInfo p) {
+        String appName = p.loadLabel(getPackageManager()).toString();
+//        String appName = "Test";
+        String packageName = p.resolvePackageName;
+
         Drawable icon=null;
         try {
-            icon = getPackageManager().getApplicationIcon(packageName);
+            icon = p.activityInfo.loadIcon(getPackageManager());
+//            icon = getPackageManager().getApplicationIcon(packageName);
 //                ImageView v = findViewById(R.id.imgApp);
 //                v.setImageDrawable(icon);
-        } catch (PackageManager.NameNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return new AppDisplayer(appName, packageName,icon);
