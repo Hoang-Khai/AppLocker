@@ -1,6 +1,8 @@
 package com.dkv.applocker.activity;
 
 import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
@@ -70,10 +72,11 @@ public class MainActivity extends AppCompatActivity {
         PackageManager packageManager = getPackageManager();
         Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+
         List<ResolveInfo> appList = packageManager.queryIntentActivities(mainIntent, 0);
         Collections.sort(appList, new ResolveInfo.DisplayNameComparator(packageManager));
         List<PackageInfo> packs = packageManager.getInstalledPackages(0);
-        for (int i = 0; i < apps.size(); i++) {
+        for (int i = 0; i < packs.size(); i++) {
             PackageInfo p = packs.get(i);
             ApplicationInfo a = p.applicationInfo;
             // skip system apps if they shall not be included
@@ -90,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private AppDisplayer getAppDisplayerFromPackageInfo(PackageInfo p) {
+        String appName = "Test";
         String packageName = p.packageName;
         Drawable icon=null;
         try {
@@ -99,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        return new AppDisplayer(packageName,icon);
-
+        return new AppDisplayer(appName, packageName,icon);
     }
 }

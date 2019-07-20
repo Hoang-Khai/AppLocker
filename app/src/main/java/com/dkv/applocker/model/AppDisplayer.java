@@ -5,12 +5,22 @@ import android.graphics.drawable.Drawable;
 import java.io.Serializable;
 
 public class AppDisplayer implements Serializable {
+    private String appName;
     private String packageName;
     private Drawable icon;
 
-    public AppDisplayer(String packageName, Drawable icon) {
+    public AppDisplayer(String appName, String packageName, Drawable icon) {
+        this.appName = appName;
         this.packageName = packageName;
         this.icon = icon;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 
     public String getPackageName() {

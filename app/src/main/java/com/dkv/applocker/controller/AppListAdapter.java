@@ -67,7 +67,7 @@ public class AppListAdapter extends BaseAdapter {
         }
 
         holder.appIC.setImageDrawable(listApp.get(position).getIcon());
-        holder.appName.setText(listApp.get(position).getPackageName());
+        holder.appName.setText(listApp.get(position).getAppName());
 //        holder.appStatus;
         return convertView;
     }
