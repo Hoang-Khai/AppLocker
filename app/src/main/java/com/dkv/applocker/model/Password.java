@@ -17,6 +17,17 @@ public class Password implements Serializable {
     private Context context;
     private String password;
 
+    public Password() {
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public Password(String password, Context context) {
         this.password = password;
         this.context = context;

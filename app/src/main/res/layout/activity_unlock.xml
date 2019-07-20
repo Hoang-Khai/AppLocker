@@ -41,8 +41,8 @@
             android:textSize="30sp" />
 
         <EditText
-            android:id="@+id/txtPassword"
-            android:layout_width="wrap_content"
+            android:id="@+id/txtPasswordRe"
+            android:layout_width="276dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/textView"
             android:layout_centerHorizontal="true"
@@ -53,18 +53,18 @@
             android:id="@+id/btnOK"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/txtPassword"
-            android:layout_marginLeft="60dp"
-            android:layout_marginTop="20dp"
+            android:layout_below="@id/txtPasswordRe"
+            android:layout_marginLeft="65dp"
+            android:layout_marginTop="31dp"
             android:text="OK" />
 
         <Button
             android:id="@+id/btnCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/txtPassword"
+            android:layout_below="@id/txtPasswordRe"
             android:layout_marginLeft="250dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="31dp"
             android:text="Cancel" />
 
     </RelativeLayout>

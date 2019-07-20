@@ -3,6 +3,7 @@ package com.dkv.applocker.activity;
 import android.app.Activity;
 import android.app.Application;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -11,7 +12,9 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,8 +29,10 @@ import android.widget.Toast;
 
 import com.dkv.applocker.R;
 import com.dkv.applocker.controller.AppListAdapter;
+import com.dkv.applocker.helper_for_sql.SQLHelper;
 import com.dkv.applocker.model.AppDisplayer;
 import com.dkv.applocker.model.LockedAppList;
+import com.dkv.applocker.model.Password;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private List<AppDisplayer> apps;
     private ListView appListView;
     Intent intent;
+    SQLHelper sqlHelper;
+    SQLiteDatabase db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         //https://github.com/savvisingh/AppLock
         //https://github.com/SubhamTyagi/AppLock
         //https://github.com/mattsilber/applock
+        sqlHelper = new SQLHelper(this);
 
         apps = new ArrayList<>();
         getAllApp();
@@ -89,26 +97,21 @@ public class MainActivity extends AppCompatActivity {
 
     //Get all application on device
     public void getAllApp() {
+
         PackageManager packageManager = getPackageManager();
         Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 
+        // ResolveInfo get all app that have launcher
         List<ResolveInfo> appList = packageManager.queryIntentActivities(mainIntent, 0);
         Collections.sort(appList, new ResolveInfo.DisplayNameComparator(packageManager));
+
+
 //        List<PackageInfo> packs = packageManager.getInstalledPackages(0);
 
         for (int i = 0; i < appList.size(); i++) {
             ResolveInfo p = appList.get(i);
-//            ApplicationInfo a = p.filter.;
-
-            // skip system apps if they shall not be included
-//            if ((a.flags & ApplicationInfo.FLAG_SYSTEM) == 1) {
-//                continue;
-//            }
-//            appList.add(p.packageName);
-//            Log.w("package",p.packageName); //Log test package
-
-            //Get icon from app
+            //Get name and icon from app
             AppDisplayer app = getAppDisplayerFromPackageInfo(p);
             apps.add(app);
         }
@@ -117,9 +120,10 @@ public class MainActivity extends AppCompatActivity {
     private AppDisplayer getAppDisplayerFromPackageInfo(ResolveInfo p) {
         String appName = p.loadLabel(getPackageManager()).toString();
 //        String appName = "Test";
-        String packageName = p.resolvePackageName;
+        String packageName = p.activityInfo.packageName;
 
         Drawable icon=null;
+
         try {
             icon = p.activityInfo.loadIcon(getPackageManager());
 //            icon = getPackageManager().getApplicationIcon(packageName);
@@ -129,5 +133,19 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return new AppDisplayer(appName, packageName,icon);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==100) {
+            if (resultCode == 200) {
+                Password password = (Password) data.getSerializableExtra("password");
+                db = sqlHelper.getWritableDatabase();
+                ContentValues values = new ContentValues();
+                values.put("password", password.getPassword());
+                db.insert("Password", null, values);
+            }
+        }
     }
 }
