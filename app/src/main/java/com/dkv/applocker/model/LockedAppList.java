@@ -1,8 +1,10 @@
 package com.dkv.applocker.model;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.dkv.applocker.helper_for_sql.SQLHelper;
 
@@ -25,7 +27,7 @@ public class LockedAppList implements Serializable {
         //select forePackage from DB, if there is 1 or more record, change result to 1
         SQLHelper dbHelper = new SQLHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(LockedAppList.TABLE_NAME, null, LockedAppList.COLUMN_NAME_APP_NAME + "=" + forePackage, null, null, null, null);
+        Cursor cursor = db.query(LockedAppList.TABLE_NAME, null, LockedAppList.COLUMN_NAME_APP_NAME + "='" + forePackage+"'", null, null, null, null);
 
         while (cursor.moveToNext())
             result = true;
@@ -36,5 +38,29 @@ public class LockedAppList implements Serializable {
         ////////////////////////////////////////////////////////////////////////////////////////////
 
         return result;
+    }
+
+    public void deletePackageFromDB(Context context, String selectedPacakage) {
+        SQLHelper dbHelper = new SQLHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        db.delete(Password.TABLE_NAME,COLUMN_NAME_APP_NAME+"=?",new String[]{selectedPacakage});
+        Log.i("DeleteSuccess",selectedPacakage);
+
+        db.close();
+        dbHelper.close();
+    }
+
+    public void writePackageToDB(Context applicationContext, String selectedPacakage) {
+        SQLHelper dbHelper = new SQLHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NAME_APP_NAME,selectedPacakage);
+        db.insert(Password.TABLE_NAME,null,values);
+        Log.i("InsertSuccess",selectedPacakage);
+
+        db.close();
+        dbHelper.close();
     }
 }

@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.dkv.applocker.R;
 import com.dkv.applocker.model.AppDisplayer;
+import com.dkv.applocker.model.LockedAppList;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ public class AppListAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.appIC = convertView.findViewById(R.id.imgAppIC);
             holder.appName = convertView.findViewById(R.id.txtAppName);
-//            holder.appStatus = (Switch) convertView.findViewById(R.id.btnStatus);
+            holder.appStatus = convertView.findViewById(R.id.btnStatus);
 
             //gắn vào convertView
             convertView.setTag(holder);
@@ -68,13 +69,14 @@ public class AppListAdapter extends BaseAdapter {
 
         holder.appIC.setImageDrawable(listApp.get(position).getIcon());
         holder.appName.setText(listApp.get(position).getAppName());
-//        holder.appStatus;
+        LockedAppList lockedAppList = new LockedAppList(aContext);
+        holder.appStatus.setChecked(lockedAppList.hasForePackageLocked(listApp.get(position).getPackageName()));
         return convertView;
     }
     static class ViewHolder {
         ImageView appIC;
         TextView appName;
-//        Switch appStatus;
+        Switch appStatus;
 
     }
 }
