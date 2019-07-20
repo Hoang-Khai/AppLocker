@@ -97,5 +97,20 @@ public class Password implements Serializable {
         return token;
     }
 
-
+    //for debug only
+//    public void rsPassword(String newPassword) {
+//        ////////////////////////////////////////////////////////////////////////////////////////////
+//        //Code to write token in here
+//        SQLHelper dbHelper = new SQLHelper(context);
+//        SQLiteDatabase db = dbHelper.getWritableDatabase();
+//
+//        db.delete(Password.TABLE_NAME,null,null);
+//        ContentValues values = new ContentValues();
+//        values.put(COLUMN_NAME_TOKEN,newPassword.hashCode());
+//        db.insert(Password.TABLE_NAME,null,values);
+//
+//        db.close();
+//        dbHelper.close();
+//        ////////////////////////////////////////////////////////////////////////////////////////////
+//    }
 }
