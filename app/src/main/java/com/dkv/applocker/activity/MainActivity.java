@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         btnSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent = new Intent(MainActivity.this,SetPasswordActivity.class);
+                intent = new Intent(MainActivity.this,SettingActivity.class);
                 startActivityForResult(intent,100);
             }
         });
