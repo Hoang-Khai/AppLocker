@@ -1,6 +1,8 @@
 package com.dkv.applocker.activity;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -68,11 +70,10 @@ public class MainActivity extends AppCompatActivity {
         PackageManager packageManager = getPackageManager();
         Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-
         List<ResolveInfo> appList = packageManager.queryIntentActivities(mainIntent, 0);
         Collections.sort(appList, new ResolveInfo.DisplayNameComparator(packageManager));
         List<PackageInfo> packs = packageManager.getInstalledPackages(0);
-        for (int i = 0; i < packs.size(); i++) {
+        for (int i = 0; i < apps.size(); i++) {
             PackageInfo p = packs.get(i);
             ApplicationInfo a = p.applicationInfo;
             // skip system apps if they shall not be included
@@ -99,6 +100,5 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return new AppDisplayer(packageName,icon);
-
     }
 }

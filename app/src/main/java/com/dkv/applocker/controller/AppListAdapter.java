@@ -1,5 +1,6 @@
 package com.dkv.applocker.controller;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,41 +21,51 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AppListAdapter extends BaseAdapter {
+
+    private Activity aContext;
     private List<AppDisplayer> listApp;
     private LayoutInflater layoutInflater;
 
-    public AppListAdapter(Context aContext, List<AppDisplayer> listApp){
+    public AppListAdapter(Activity aContext, List<AppDisplayer> listApp){
+        this.aContext = aContext;
         this.listApp = listApp;
         layoutInflater = LayoutInflater.from(aContext);
     }
     @Override
     public int getCount() {
-        return 0;
+        return listApp.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return listApp.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
+
+        //Tham chiếu đến layout
+
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.activity_app_list_adapter, null);
+//            convertView = layoutInflater.inflate(R.layout.activity_app_list_adapter, null);
+            convertView = LayoutInflater.from(aContext).inflate(R.layout.activity_app_list_adapter,null);
             holder = new ViewHolder();
             holder.appIC = convertView.findViewById(R.id.imgAppIC);
             holder.appName = convertView.findViewById(R.id.txtAppName);
 //            holder.appStatus = (Switch) convertView.findViewById(R.id.btnStatus);
+
+            //gắn vào convertView
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+
         holder.appIC.setImageDrawable(listApp.get(position).getIcon());
         holder.appName.setText(listApp.get(position).getPackageName());
 //        holder.appStatus;
