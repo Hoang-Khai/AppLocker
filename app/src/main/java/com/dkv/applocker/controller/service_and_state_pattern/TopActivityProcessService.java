@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
 import com.dkv.applocker.controller.service_and_state_pattern.State.LockedState;
@@ -47,7 +48,8 @@ public class TopActivityProcessService extends AccessibilityService {
         String forePackage="";
         //Phan nay dang viet do
         if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            if (event.getPackageName() != null && event.getClassName() != null) {
+            if (event.getPackageName() != null && event.getClassName() != null && !event.getPackageName().toString().equals("com.dkv.applocker")) {
+                Log.i("ActivityChange",event.getPackageName().toString());
                 ComponentName componentName = new ComponentName(
                         event.getPackageName().toString(),
                         event.getClassName().toString()
@@ -90,6 +92,14 @@ public class TopActivityProcessService extends AccessibilityService {
 
     public void setCurrentState(State currentState) {
         this.currentState = currentState;
+        Log.i("SetOrNot","Set to " + currentState.toString() + " / " + this.currentState.toString());
     }
 
+    public State getCurrentState() {
+        return currentState;
+    }
+
+    public void setCurrentPackage(String currentPackage) {
+        this.currentPackage = currentPackage;
+    }
 }
