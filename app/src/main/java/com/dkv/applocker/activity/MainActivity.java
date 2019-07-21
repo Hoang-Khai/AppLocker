@@ -242,11 +242,4 @@ public class MainActivity extends AppCompatActivity {
         startActivity(homeScreen);
     }
 
-    @Override
-    public void onBackPressed() {
-        Intent homeScreen = new Intent(Intent.ACTION_MAIN);
-        homeScreen.addCategory(Intent.CATEGORY_HOME);
-        homeScreen.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(homeScreen);
-    }
 }
