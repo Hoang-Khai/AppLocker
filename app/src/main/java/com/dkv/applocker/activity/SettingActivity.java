@@ -24,7 +24,8 @@ public class SettingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 setResult(50,intent);
-                finish();
+                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(intent);
             }
         });
         btnChangeP.setOnClickListener(new View.OnClickListener() {

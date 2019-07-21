@@ -30,7 +30,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 setResult(200);
-                finish();
+                Intent intent = new Intent(getApplicationContext(),SettingActivity.class);
+                startActivity(intent);
             }
         });
 
