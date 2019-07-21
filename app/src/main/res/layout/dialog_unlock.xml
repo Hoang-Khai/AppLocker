@@ -32,7 +32,7 @@
 
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/txtConfig"
             android:layout_width="222dp"
             android:layout_height="51dp"
             android:layout_alignParentTop="true"
@@ -45,7 +45,7 @@
             android:id="@+id/txtPasswordRe"
             android:layout_width="276dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textView"
+            android:layout_below="@+id/txtConfig"
             android:layout_centerHorizontal="true"
             android:ems="10"
             android:inputType="textPassword" />

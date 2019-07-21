@@ -1,19 +1,16 @@
 package com.dkv.applocker.activity;
 
-import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.dkv.applocker.R;
 import com.dkv.applocker.controller.AppListAdapter;
@@ -62,14 +60,21 @@ public class MainActivity extends AppCompatActivity {
 //        Ask for permission
 //        askPermission();
 
-        //First time, if there are no passwords in DB, let user create one
-        Password password = new Password(getApplicationContext());
-        if (!password.hasPasswordInDB()) {
-            intent = new Intent(MainActivity.this, SetPasswordActivity.class);
-            startActivity(intent);
+        //Check accessibility service permission
+
+        if (!isAccessibilitySettingsOn(getApplicationContext())) {
+            accessibilityCheckDialog();
         } else {
-            //If there is a password, ask user to enter it before using this app
-            unlockDialog();
+            //First time, if there are no passwords in DB, let user create one
+            Password password = new Password(getApplicationContext());
+
+            if (!password.hasPasswordInDB()) {
+                intent = new Intent(MainActivity.this, SetPasswordActivity.class);
+                startActivity(intent);
+            } else {
+                //If there is a password, ask user to enter it before using this app
+                unlockDialog();
+            }
         }
 
         //Button setting is for change password only
@@ -97,6 +102,44 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // To check if service is enabled
+    private boolean isAccessibilitySettingsOn(Context mContext) {
+        int accessibilityEnabled = 0;
+        final String service = getPackageName() + "/" + TopActivityProcessService.class.getCanonicalName();
+        try {
+            accessibilityEnabled = Settings.Secure.getInt(
+                    mContext.getApplicationContext().getContentResolver(),
+                    android.provider.Settings.Secure.ACCESSIBILITY_ENABLED);
+            Log.v("Check Access", "accessibilityEnabled = " + accessibilityEnabled);
+        } catch (Settings.SettingNotFoundException e) {
+            Log.e("Check Access", "Error finding setting, default accessibility to not found: "
+                    + e.getMessage());
+        }
+        TextUtils.SimpleStringSplitter mStringColonSplitter = new TextUtils.SimpleStringSplitter(':');
+        if (accessibilityEnabled == 1) {
+            Log.v("Check Access", "ACCESSIBILITY IS ENABLED");
+            String settingValue = Settings.Secure.getString(
+                    mContext.getApplicationContext().getContentResolver(),
+                    Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
+            if (settingValue != null) {
+                mStringColonSplitter.setString(settingValue);
+                while (mStringColonSplitter.hasNext()) {
+                    String accessibilityService = mStringColonSplitter.next();
+
+                    Log.v("CheckAccess", "accessibilityService :: " + accessibilityService + " " + service);
+                    if (accessibilityService.equalsIgnoreCase(service)) {
+                        Log.v("Check Access", "Accessibility is switched on!");
+                        return true;
+                    }
+                }
+            }
+        } else {
+            Log.v("CheckAccess", "ACCESSIBILITY IS DISABLED");
+        }
+        return false;
+    }
+
+
 //    private void askPermission() {
 //        if (ContextCompat.checkSelfPermission(this,
 //                Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
@@ -122,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
 //        } else {
 //            // Permission has already been granted
 //        }
-//
 //    }
 
     //Change 1 app from Lock to Unlock and vice versa
@@ -199,6 +241,29 @@ public class MainActivity extends AppCompatActivity {
 //        sendBroadcast(intent);
 //        super.onStop();
 //    }
+
+    public void accessibilityCheckDialog() {
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        final View view = layoutInflater.inflate(R.layout.accessibility_dialog, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(view);
+        final TextView config = view.findViewById(R.id.txtConfig);
+
+        config.setText("Please switch on Accessibility Service of AppLocker in the Setting to use this App\n\n 1.Press Go to Setting\n\n 2." +
+                "Find AppLocker in Service section\n\n 3.Switch on AppLocker Service");
+        builder.setPositiveButton("Go to Setting", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+            }
+        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                getToHomeScreen();
+            }
+        });
+        builder.show();
+    }
 
     public void unlockDialog() {
         LayoutInflater layoutInflater = LayoutInflater.from(this);
