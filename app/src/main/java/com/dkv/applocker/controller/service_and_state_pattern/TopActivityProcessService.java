@@ -3,6 +3,7 @@ package com.dkv.applocker.controller.service_and_state_pattern;
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.ComponentName;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -13,20 +14,14 @@ import com.dkv.applocker.controller.service_and_state_pattern.State.LockedState;
 import com.dkv.applocker.controller.service_and_state_pattern.State.State;
 import com.dkv.applocker.controller.service_and_state_pattern.State.UnlockedState;
 
-public class TopActivityProcessService extends AccessibilityService {
+import java.io.Serializable;
+import java.security.Provider;
 
-    State lockedState;
-    State unlockedState;
+public class TopActivityProcessService extends AccessibilityService implements Serializable {
 
-    State currentState;
-    String currentPackage;
 
     public TopActivityProcessService() {
-        lockedState = new LockedState(this);
-        unlockedState = new UnlockedState(this);
 
-        currentState = lockedState;
-        currentPackage = "com.dkv.applocker";
     }
 
     @Override
@@ -45,22 +40,22 @@ public class TopActivityProcessService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
-        String forePackage="";
+        String forePackage = "";
         //Phan nay dang viet do
         if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            if (event.getPackageName() != null && event.getClassName() != null && !event.getPackageName().toString().equals("com.dkv.applocker")) {
-                Log.i("ActivityChange",event.getPackageName().toString());
+            if (event.getPackageName() != null && event.getClassName() != null && !event.getPackageName().toString().equals("com.dkv.applocker") && !event.getPackageName().toString().contains("com.google.android.inputmethod")) {
+                Log.i("ActivityChange", event.getPackageName().toString());
                 ComponentName componentName = new ComponentName(
                         event.getPackageName().toString(),
                         event.getClassName().toString()
                 );
-
                 ActivityInfo activityInfo = tryGetActivity(componentName);
-                boolean isActivity = activityInfo != null;
-                if (isActivity) {
-                    forePackage = componentName.getPackageName();
-                    currentState.changeActivity(forePackage, getApplicationContext());
-                }
+                ServiceController serviceController = ServiceController.getInstance();
+                serviceController.setComponentName(componentName);
+                serviceController.setActivityInfo(activityInfo);
+                serviceController.setContext(this);
+
+                serviceController.process();
             }
         }
     }
@@ -78,28 +73,19 @@ public class TopActivityProcessService extends AccessibilityService {
 
     }
 
-    public String getCurrentPackage() {
-        return currentPackage;
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        Log.i("TaskRemove","is called");
+        Intent intent = new Intent("com.dkv.applocker.controller.service_and_state_pattern");
+        intent.setFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+        sendBroadcast(intent);
     }
 
-    public State getLockedState() {
-        return lockedState;
-    }
-
-    public State getUnlockedState() {
-        return unlockedState;
-    }
-
-    public void setCurrentState(State currentState) {
-        this.currentState = currentState;
-        Log.i("SetOrNot","Set to " + currentState.toString() + " / " + this.currentState.toString());
-    }
-
-    public State getCurrentState() {
-        return currentState;
-    }
-
-    public void setCurrentPackage(String currentPackage) {
-        this.currentPackage = currentPackage;
+    @Override
+    public void onDestroy() {
+        Log.i("ServiceDestroyed","is called");
+        Intent intent = new Intent("com.dkv.applocker.controller.service_and_state_pattern");
+        intent.setFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+        sendBroadcast(intent);
     }
 }

@@ -1,11 +1,15 @@
 package com.dkv.applocker.activity;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -13,6 +17,7 @@ import android.widget.ListView;
 
 import com.dkv.applocker.R;
 import com.dkv.applocker.controller.AppListAdapter;
+import com.dkv.applocker.controller.service_and_state_pattern.TopActivityProcessService;
 import com.dkv.applocker.model.AppDisplayer;
 import com.dkv.applocker.model.LockedAppList;
 import com.dkv.applocker.model.Password;
@@ -45,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
 //        p.delPassword();
 //        LockedAppList lockedAppList = new LockedAppList(getApplicationContext());
 //        lockedAppList.delList();
+
+//        Ask for permission
+//        askPermission();
 
         //First time, if there are no passwords in DB, let user create one
         Password password = new Password(getApplicationContext());
@@ -81,6 +89,34 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+//    private void askPermission() {
+//        if (ContextCompat.checkSelfPermission(this,
+//                Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+//                != PackageManager.PERMISSION_GRANTED) {
+//
+//            // Permission is not granted
+//            // Should we show an explanation?
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+//                    Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)) {
+//                // Show an explanation to the user *asynchronously* -- don't block
+//                // this thread waiting for the user's response! After the user
+//                // sees the explanation, try again to request the permission.
+//            } else {
+//                // No explanation needed; request the permission
+//                ActivityCompat.requestPermissions(this,
+//                        new String[]{Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS},
+//                        101);
+//
+//                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+//                // app-defined int constant. The callback method gets the
+//                // result of the request.
+//            }
+//        } else {
+//            // Permission has already been granted
+//        }
+//
+//    }
 
     //Change 1 app from Lock to Unlock and vice versa
     private void changeAppState(AdapterView<?> parent, View view, int position, long id) {
@@ -139,4 +175,21 @@ public class MainActivity extends AppCompatActivity {
         }
         return new AppDisplayer(appName, packageName, icon);
     }
+
+    @Override
+    protected void onDestroy() {
+        Log.i("MainOnDestroy","is called");
+        Intent intent = new Intent("com.dkv.applocker.controller.service_and_state_pattern");
+        intent.setFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+        sendBroadcast(intent);
+        super.onDestroy();
+    }
+
+//    @Override
+//    protected void onStop() {
+//        Log.i("MainOnStop","is called");
+//        Intent intent = new Intent("com.dkv.applocker.controller.service_and_state_pattern");
+//        sendBroadcast(intent);
+//        super.onStop();
+//    }
 }

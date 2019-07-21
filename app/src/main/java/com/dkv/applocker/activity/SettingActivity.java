@@ -3,6 +3,7 @@ package com.dkv.applocker.activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -34,4 +35,21 @@ public class SettingActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onDestroy() {
+        Log.i("SettingOnDestroy","is called");
+        Intent intent = new Intent("com.dkv.applocker.controller.service_and_state_pattern");
+        intent.setFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+        sendBroadcast(intent);
+        super.onDestroy();
+    }
+
+//    @Override
+//    protected void onStop() {
+//        Log.i("SettingOnStop","is called");
+//        Intent intent = new Intent("com.dkv.applocker.controller.service_and_state_pattern");
+//        sendBroadcast(intent);
+//        super.onStop();
+//    }
 }

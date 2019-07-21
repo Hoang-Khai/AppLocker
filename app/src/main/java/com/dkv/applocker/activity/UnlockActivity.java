@@ -3,12 +3,15 @@ package com.dkv.applocker.activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.dkv.applocker.R;
+import com.dkv.applocker.controller.service_and_state_pattern.ServiceController;
+import com.dkv.applocker.controller.service_and_state_pattern.TopActivityProcessService;
 import com.dkv.applocker.model.Password;
 
 public class UnlockActivity extends AppCompatActivity {
@@ -37,7 +40,7 @@ public class UnlockActivity extends AppCompatActivity {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pressCancelButton();
+                getToHomeScreen();
             }
         });
     }
@@ -49,18 +52,18 @@ public class UnlockActivity extends AppCompatActivity {
         String pass = txtPassword.getText().toString();
         Password p = new Password(pass,getApplicationContext());
         if (p.isMatchedWithTokenInDB()) {
-//            finish intent
+            //if match, close activity
+            ServiceController locker = ServiceController.getOurInstance();
+            locker.setCurrentState(locker.getUnlockedState());
             finish();
         }
         else {
-//            txtPassword.setText("");
-//            textView.setText("Wrong Password");
-            pressCancelButton();
+            //wrong password
+            getToHomeScreen();
         }
     }
 
-
-    private void pressCancelButton() {
+    private void getToHomeScreen() {
         Intent homeScreen = new Intent(Intent.ACTION_MAIN);
         homeScreen.addCategory(Intent.CATEGORY_HOME);
         homeScreen.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -69,6 +72,23 @@ public class UnlockActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        pressCancelButton();
+        getToHomeScreen();
     }
+
+    @Override
+    protected void onDestroy() {
+        Log.i("UnlockOnDestroy","is called");
+        Intent intent = new Intent("com.dkv.applocker.controller.service_and_state_pattern");
+        intent.setFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+        sendBroadcast(intent);
+        super.onDestroy();
+    }
+
+//    @Override
+//    protected void onStop() {
+//        Log.i("UnlockOnStop","is called");
+//        Intent intent = new Intent("com.dkv.applocker.controller.service_and_state_pattern");
+//        sendBroadcast(intent);
+//        super.onStop();
+//    }
 }

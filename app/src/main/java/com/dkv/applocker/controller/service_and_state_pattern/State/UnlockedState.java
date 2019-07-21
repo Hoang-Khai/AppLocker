@@ -3,13 +3,16 @@ package com.dkv.applocker.controller.service_and_state_pattern.State;
 import android.content.Context;
 import android.util.Log;
 
+import com.dkv.applocker.controller.service_and_state_pattern.ServiceController;
 import com.dkv.applocker.controller.service_and_state_pattern.TopActivityProcessService;
 
-public class UnlockedState implements State {
+import java.io.Serializable;
 
-    TopActivityProcessService parent;
+public class UnlockedState implements State, Serializable {
 
-    public UnlockedState(TopActivityProcessService topActivityProcessService) {
+    ServiceController parent;
+
+    public UnlockedState(ServiceController topActivityProcessService) {
         parent = topActivityProcessService;
     }
 

@@ -1,7 +1,9 @@
 package com.dkv.applocker.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,7 +25,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
         setRef();
 
-        //Quay trở lại trang MainAcitivity
+        //Quay trở lại trang SettingActivity
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,27 +52,33 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
     }
 
+    //Reset all EditText
     private void resetTXT() {
         oldPass.setText("");
         newPass.setText("");
         reEnNewPass.setText("");
     }
 
+    //Change the password to the new one
     private void setPass() {
         String oldPassword = oldPass.getText().toString();
         String newPassword = newPass.getText().toString();
         String rePassword = reEnNewPass.getText().toString();
+        //Check if password and re-Password match
         if(newPassword.equals(rePassword)) {
             Password password = new Password(newPassword,getApplicationContext());
             try {
+                //try to change password
                 password.changePasswordInSQlite(oldPassword);
                 resetTXT();
                 notifyUser("Success");
             } catch (WrongPasswordException e) {
+                //Exception is throw when the oldPassword is not match the one in DB
                 resetTXT();
                 notifyUser("Old password was not correct.");
             }
         } else {
+            //if not, notify user
             resetTXT();
             notifyUser("Password and re-enter password didn't match.");
         }
@@ -80,6 +88,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(),message,Toast.LENGTH_LONG).show();
     }
 
+    //get references from activity
     private void setRef() {
         btnBack = findViewById(R.id.btnBackToSetting);
         oldPass = findViewById(R.id.txtOldPassword);
@@ -88,4 +97,23 @@ public class ChangePasswordActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btnSave);
         btnReset = findViewById(R.id.btnReset);
     }
+
+    @Override
+    protected void onDestroy() {
+        Log.i("ChangePassOnDestroy","is called");
+        Intent intent = new Intent("com.dkv.applocker.controller.service_and_state_pattern");
+        intent.setFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+        sendBroadcast(intent);
+        super.onDestroy();
+    }
+
+//    @Override
+//    protected void onStop() {
+//        Log.i("ChangePassOnStop","is called");
+//        Intent intent = new Intent("com.dkv.applocker.controller.service_and_state_pattern");
+//        sendBroadcast(intent);
+//        super.onStop();
+//    }
+//
+//
 }

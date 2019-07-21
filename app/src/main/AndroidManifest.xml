@@ -9,9 +9,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.ChangePasswordActivity"></activity>
+        <receiver
+            android:name=".controller.service_and_state_pattern.RestartServicesBroastcast"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.dkv.applocker.controller.service_and_state_pattern"></action>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <activity android:name=".activity.ChangePasswordActivity" />
         <activity android:name=".activity.SettingActivity" />
-        <activity android:name=".controller.AppListAdapter" />
         <activity android:name=".activity.UnlockActivity" />
 
         <service
@@ -28,7 +37,6 @@
                 android:resource="@xml/accessibilityservice" />
         </service>
 
-        <activity android:name=".activity.SelectAppToLock" />
         <activity android:name=".activity.SetPasswordActivity" />
         <activity android:name=".activity.MainActivity">
             <intent-filter>

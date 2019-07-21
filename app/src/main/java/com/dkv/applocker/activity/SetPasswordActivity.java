@@ -39,6 +39,7 @@ public class SetPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_set_password);
 
         setRef();
+
         final Intent intent = new Intent();
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,31 +49,16 @@ public class SetPasswordActivity extends AppCompatActivity {
             }
         });
 
-        Password password = new Password(getApplicationContext());
-        Log.i("PassInDB",""+password.hasPasswordInDB());
-        if (password.hasPasswordInDB()) {
-            hideNewPasswordComponent();
-        } else {
-            btnChangeP.setClickable(false);
-            btnChangeP.setVisibility(View.GONE);
+        btnChangeP.setClickable(false);
+        btnChangeP.setVisibility(View.GONE);
 
-            btnSave.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    insertPassword();
-                }
-            });
-        }
-    }
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                insertPassword();
+            }
+        });
 
-    private void hideNewPasswordComponent() {
-        btnSave.setClickable(false);
-        btnSave.setVisibility(View.GONE);
-        txtPassword.setVisibility(View.GONE);
-        txtPasswordRe.setVisibility(View.GONE);
-        textViewSet.setVisibility(View.GONE);
-        textView1R.setVisibility(View.GONE);
-        textView2R.setVisibility(View.GONE);
     }
 
     private void setRef() {
@@ -91,21 +77,36 @@ public class SetPasswordActivity extends AppCompatActivity {
         textViewCheck.setText("");
     }
 
+    //Set the password with these two
     public void insertPassword() {
+        //check if password and re-Password match
         if (txtPassword.getText().toString().equals(txtPasswordRe.getText().toString())) {
-            Password password = new Password(txtPassword.getText().toString(),getApplicationContext());
+            Password password = new Password(txtPassword.getText().toString(), getApplicationContext());
             password.changePasswordInSQlite();
-//            Intent intent = new Intent();
-            Toast.makeText(getApplicationContext(),"Set password success",Toast.LENGTH_LONG).show();
-//            textViewCheck.setText("Set password success!");
-//            intent.putExtra("password", password);
-//            setResult(200, intent);
 
+            Toast.makeText(getApplicationContext(), "Set password success", Toast.LENGTH_LONG).show();
             finish();
         } else {
+            //if not, alert
             textViewCheck.setText("Two password doesn't match");
             textViewCheck.setTextColor(Color.RED);
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        Log.i("SetPassOnDestroy","is called");
+        Intent intent = new Intent("com.dkv.applocker.controller.service_and_state_pattern");
+        intent.setFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+        sendBroadcast(intent);
+        super.onDestroy();
+    }
+
+//    @Override
+//    protected void onStop() {
+//        Log.i("SetPassOnStop","is called");
+//        Intent intent = new Intent("com.dkv.applocker.controller.service_and_state_pattern");
+//        sendBroadcast(intent);
+//        super.onStop();
+//    }
 }

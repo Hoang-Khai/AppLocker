@@ -5,14 +5,17 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.dkv.applocker.activity.UnlockActivity;
+import com.dkv.applocker.controller.service_and_state_pattern.ServiceController;
 import com.dkv.applocker.controller.service_and_state_pattern.TopActivityProcessService;
 import com.dkv.applocker.model.LockedAppList;
 
-public class LockedState implements State {
+import java.io.Serializable;
 
-    TopActivityProcessService parent;
+public class LockedState implements State, Serializable {
 
-    public LockedState(TopActivityProcessService topActivityProcessService) {
+    ServiceController parent;
+
+    public LockedState(ServiceController topActivityProcessService) {
         parent = topActivityProcessService;
     }
 
@@ -20,15 +23,15 @@ public class LockedState implements State {
     public void changeActivity(String forePackage, Context context) {
         LockedAppList list = new LockedAppList(context);
         if(list.hasForePackageLocked(forePackage)) {
-            askUserToEnterPassword(context);
+            askUserToEnterPassword(forePackage, context);
         }
         parent.setCurrentPackage(forePackage);
     }
 
-    private void askUserToEnterPassword(Context context) {
+    private void askUserToEnterPassword(String forePackage, Context context) {
         Intent intent = new Intent(context, UnlockActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
-        parent.setCurrentState(parent.getUnlockedState());
         Log.i("ParentState",parent.getCurrentState().toString());
     }
 
