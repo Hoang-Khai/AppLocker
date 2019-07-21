@@ -19,7 +19,6 @@ public class UnlockActivity extends AppCompatActivity {
     private EditText txtPassword;
     private Button btnOK;
     private Button btnCancel;
-    private TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +27,6 @@ public class UnlockActivity extends AppCompatActivity {
         txtPassword = findViewById(R.id.txtPasswordRe);
         btnOK = findViewById(R.id.btnOK);
         btnCancel = findViewById(R.id.btnCancel);
-        textView = findViewById(R.id.textView);
 
         btnOK.setOnClickListener(new View.OnClickListener() {
             @Override
