@@ -247,6 +247,7 @@ public class MainActivity extends AppCompatActivity {
         final View view = layoutInflater.inflate(R.layout.accessibility_dialog, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(view);
+        builder.setCancelable(false);
         final TextView config = view.findViewById(R.id.txtConfig);
 
         config.setText("Please switch on Accessibility Service of AppLocker in the Setting to use this App\n\n 1.Press Go to Setting\n\n 2." +
