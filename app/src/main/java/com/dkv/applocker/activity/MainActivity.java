@@ -205,6 +205,7 @@ public class MainActivity extends AppCompatActivity {
         final View view = layoutInflater.inflate(R.layout.dialog_unlock, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(view);
+        builder.setCancelable(false);
         final EditText txtPassword = view.findViewById(R.id.txtPasswordRe);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
