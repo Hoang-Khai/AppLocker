@@ -19,9 +19,12 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".activity.ChangePasswordActivity" />
-        <activity android:name=".activity.SettingActivity" />
-        <activity android:name=".activity.UnlockActivity" />
+        <activity android:name=".activity.ChangePasswordActivity"
+            android:noHistory="true"/>
+        <activity android:name=".activity.SettingActivity"
+            android:noHistory="true"/>
+        <activity android:name=".activity.UnlockActivity"
+            android:noHistory="true"/>
 
         <service
             android:name=".controller.service_and_state_pattern.TopActivityProcessService"
@@ -37,8 +40,10 @@
                 android:resource="@xml/accessibilityservice" />
         </service>
 
-        <activity android:name=".activity.SetPasswordActivity" />
-        <activity android:name=".activity.MainActivity">
+        <activity android:name=".activity.SetPasswordActivity"
+            android:noHistory="true"/>
+        <activity android:name=".activity.MainActivity"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

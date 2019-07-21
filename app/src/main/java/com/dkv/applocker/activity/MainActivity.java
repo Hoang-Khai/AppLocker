@@ -1,22 +1,30 @@
 package com.dkv.applocker.activity;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.dkv.applocker.R;
 import com.dkv.applocker.controller.AppListAdapter;
+import com.dkv.applocker.controller.service_and_state_pattern.ServiceController;
 import com.dkv.applocker.controller.service_and_state_pattern.TopActivityProcessService;
 import com.dkv.applocker.model.AppDisplayer;
 import com.dkv.applocker.model.LockedAppList;
@@ -61,8 +69,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         } else {
             //If there is a password, ask user to enter it before using this app
-            intent = new Intent(MainActivity.this, UnlockActivity.class);
-            startActivity(intent);
+            unlockDialog();
         }
 
         //Button setting is for change password only
@@ -178,18 +185,59 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        Log.i("MainOnDestroy","is called");
+        Log.i("MainOnDestroy", "is called");
         Intent intent = new Intent("com.dkv.applocker.controller.service_and_state_pattern");
         intent.setFlags(Intent.FLAG_RECEIVER_FOREGROUND);
         sendBroadcast(intent);
         super.onDestroy();
     }
 
-//    @Override
+    //    @Override
 //    protected void onStop() {
 //        Log.i("MainOnStop","is called");
 //        Intent intent = new Intent("com.dkv.applocker.controller.service_and_state_pattern");
 //        sendBroadcast(intent);
 //        super.onStop();
 //    }
+
+    public void unlockDialog() {
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        final View view = layoutInflater.inflate(R.layout.dialog_unlock, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(view);
+        final EditText txtPassword = view.findViewById(R.id.txtPasswordRe);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                pressOkButton(txtPassword.getText().toString());
+            }
+        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                getToHomeScreen();
+            }
+        });
+        builder.show();
+    }
+
+    private void pressOkButton(String pass) {
+        //Compare password in database and user's password
+        Password p = new Password(pass,this);
+        if (p.isMatchedWithTokenInDB()) {
+            //if match, close activity
+            ServiceController locker = ServiceController.getOurInstance();
+            locker.setCurrentState(locker.getUnlockedState());
+        }
+        else {
+            //wrong password
+            getToHomeScreen();
+        }
+    }
+
+    private void getToHomeScreen() {
+        Intent homeScreen = new Intent(Intent.ACTION_MAIN);
+        homeScreen.addCategory(Intent.CATEGORY_HOME);
+        homeScreen.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(homeScreen);
+    }
 }

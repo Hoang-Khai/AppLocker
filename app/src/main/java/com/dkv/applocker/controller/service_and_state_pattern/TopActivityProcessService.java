@@ -53,7 +53,7 @@ public class TopActivityProcessService extends AccessibilityService implements S
                 ServiceController serviceController = ServiceController.getInstance();
                 serviceController.setComponentName(componentName);
                 serviceController.setActivityInfo(activityInfo);
-                serviceController.setContext(this);
+                serviceController.setContext(getApplicationContext());
 
                 serviceController.process();
             }
